@@ -1,0 +1,13 @@
+venv
+media
+sqlite3
+*.log
+__pycache__
+*.pyc
+*.pyo
+node_modules
+dist
+.env
+*.env
+Pipfile.lock
+.DS_Store
