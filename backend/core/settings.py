@@ -10,7 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+from django.core.exceptions import ImproperlyConfigured
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,13 +23,66 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-hc)y8kp07+sc@z8ab)c7manyjung$3w@svh3e14pjdy+*sakj6'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# -- SECURITY WARNINGS --
+# 1. pull the key from the .env file
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
-ALLOWED_HOSTS = []
+# 2. Strict check for debug mode
+DEBUG = os.environ.get('DJANGO_DEBUG') == 'True'
+
+def _env_bool(name, default=False):
+    return os.getenv(name, str(default)).strip().lower() in {
+        '1',
+        'true',
+        't',
+        'yes',
+        'y',
+        'on',
+    }
+
+
+def _env_list(name, default=''):
+    value = os.getenv(name, default)
+    return [item.strip() for item in value.split(',') if item.strip()]
+
+
+# SECURITY WARNING: keep debug off in production.
+# DEBUG = _env_bool('DJANGO_DEBUG', True)
+
+# SECURITY WARNING: keep the secret key used in production secret.
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = 'django-insecure-hc)y8kp07+sc@z8ab)c7manyjung$3w@svh3e14pjdy+*sakj6'
+    else:
+        raise ImproperlyConfigured(
+            'DJANGO_SECRET_KEY must be set when DJANGO_DEBUG is False.'
+        )
+
+_default_allowed_hosts = 'localhost,127.0.0.1' if DEBUG else ''
+ALLOWED_HOSTS = _env_list('DJANGO_ALLOWED_HOSTS', _default_allowed_hosts)
+if not ALLOWED_HOSTS and not DEBUG:
+    raise ImproperlyConfigured(
+        'DJANGO_ALLOWED_HOSTS must be set when DJANGO_DEBUG is False.'
+    )
+
+# Production security settings
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = _env_bool('DJANGO_SECURE_SSL_REDIRECT', not DEBUG)
+SESSION_COOKIE_SECURE = _env_bool('DJANGO_SESSION_COOKIE_SECURE', not DEBUG)
+CSRF_COOKIE_SECURE = _env_bool('DJANGO_CSRF_COOKIE_SECURE', not DEBUG)
+SECURE_HSTS_SECONDS = int(
+    os.getenv('DJANGO_SECURE_HSTS_SECONDS', '31536000' if not DEBUG else '0')
+)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = _env_bool(
+    'DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS',
+    not DEBUG,
+)
+SECURE_HSTS_PRELOAD = _env_bool('DJANGO_SECURE_HSTS_PRELOAD', not DEBUG)
+SECURE_CONTENT_TYPE_NOSNIFF = _env_bool('DJANGO_SECURE_CONTENT_TYPE_NOSNIFF', True)
+SECURE_REFERRER_POLICY = os.getenv('DJANGO_SECURE_REFERRER_POLICY', 'same-origin')
+X_FRAME_OPTIONS = os.getenv('DJANGO_X_FRAME_OPTIONS', 'DENY')
 
 
 # Application definition
@@ -126,9 +183,13 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CORS_ALLOW_ALL_ORIGINS = _env_bool('DJANGO_CORS_ALLOW_ALL_ORIGINS', DEBUG)
+CORS_ALLOWED_ORIGINS = _env_list('DJANGO_CORS_ALLOWED_ORIGINS', '')
+if CORS_ALLOW_ALL_ORIGINS:
+    CORS_ALLOWED_ORIGINS = []
 
+CSRF_TRUSTED_ORIGINS = _env_list('DJANGO_CSRF_TRUSTED_ORIGINS', '')
 
-CORS_ALLOW_ALL_ORIGINS = True
 # configure media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

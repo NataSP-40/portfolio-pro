@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Test - Portfolio Pro</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333;
+      }
+      .button {
+        background: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin: 10px 0;
+      }
+      .button:hover {
+        background: #0056b3;
+      }
+      .log-container {
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 15px;
+        margin: 20px 0;
+        max-height: 400px;
+        overflow-y: auto;
+        font-family: monospace;
+        font-size: 13px;
+      }
+      .log-entry {
+        margin: 5px 0;
+        padding: 5px;
+        border-left: 3px solid #007bff;
+        padding-left: 10px;
+      }
+      .log-success {
+        border-left-color: #28a745;
+        color: #155724;
+      }
+      .log-error {
+        border-left-color: #dc3545;
+        color: #721c24;
+      }
+      .log-info {
+        border-left-color: #17a2b8;
+        color: #0c5460;
+      }
+      .response-data {
+        background: #e8f4f8;
+        border: 1px solid #b8daff;
+        border-radius: 4px;
+        padding: 15px;
+        margin: 15px 0;
+        white-space: pre-wrap;
+        font-family: monospace;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔧 Portfolio Pro - API Test</h1>
+
+      <p>
+        This page tests if your React app can successfully fetch from the Django
+        API.
+      </p>
+
+      <button class="button" onclick="testFetch()">Test Fetch from API</button>
+      <button class="button" onclick="clearLogs()">Clear Logs</button>
+
+      <h3>📊 API Test Results:</h3>
+      <div class="log-container" id="logs"></div>
+
+      <div id="response-container"></div>
+    </div>
+
+    <script>
+      function log(message, type = "info") {
+        const logsDiv = document.getElementById("logs");
+        const entry = document.createElement("div");
+        entry.className = `log-entry log-${type}`;
+        entry.textContent = message;
+        logsDiv.appendChild(entry);
+        logsDiv.scrollTop = logsDiv.scrollHeight;
+        console.log(`[${type.toUpperCase()}] ${message}`);
+      }
+
+      function clearLogs() {
+        document.getElementById("logs").innerHTML = "";
+        document.getElementById("response-container").innerHTML = "";
+      }
+
+      async function testFetch() {
+        clearLogs();
+        log("🔄 Starting API test...", "info");
+
+        const apiUrl = "http://localhost:8000/api/contact-info/";
+        log(`📍 Target URL: ${apiUrl}`, "info");
+
+        try {
+          log("⏳ Sending request...", "info");
+
+          const response = await fetch(apiUrl, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          log(
+            `📬 Response status: ${response.status}`,
+            response.ok ? "success" : "error",
+          );
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          log("✅ Successfully parsed JSON response", "success");
+
+          // Display response data
+          const container = document.getElementById("response-container");
+          const title = document.createElement("h3");
+          title.textContent = "✨ API Response Data:";
+          const dataDiv = document.createElement("div");
+          dataDiv.className = "response-data";
+          dataDiv.textContent = JSON.stringify(data, null, 2);
+
+          container.appendChild(title);
+          container.appendChild(dataDiv);
+
+          log(`📧 Email: ${data.email}`, "success");
+          log(`📱 Phone: ${data.phone_number || "Not provided"}`, "success");
+          log(
+            `🔗 LinkedIn: ${data.linkedin_link || "Not provided"}`,
+            "success",
+          );
+          log("🎉 Test completed successfully!", "success");
+        } catch (error) {
+          log(`❌ Error: ${error.message}`, "error");
+          log("💡 Tips:", "info");
+          log("  - Is Django running on port 8000?", "info");
+          log("  - Try: curl http://localhost:8000/api/contact-info/", "info");
+          log("  - Check Django console for errors", "info");
+          log(`  - Browser console will show CORS errors if any`, "info");
+        }
+      }
+
+      // Auto-test on page load
+      window.addEventListener("load", function () {
+        log("✨ Page loaded. You can test the API now.", "info");
+      });
+    </script>
+  </body>
+</html>

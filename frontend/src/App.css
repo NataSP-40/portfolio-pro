@@ -1,3 +1,9 @@
+/* Enable smooth scrolling for the entire page */
+/* This makes the scroll animation smooth instead of instant jumping */
+html {
+  scroll-behavior: smooth;
+}
+
 #root {
   max-width: 100%;
   margin: 0;
