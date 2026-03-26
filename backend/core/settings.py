@@ -53,7 +53,7 @@ def _env_required(name):
 
 
 # SECURITY WARNING: keep the secret key used in production secret.
-SECRET_KEY = _env_required('DJANGO_SECRET_KEY')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 _default_allowed_hosts = 'localhost,127.0.0.1' if DEBUG else ''
 ALLOWED_HOSTS = _env_list('DJANGO_ALLOWED_HOSTS', _default_allowed_hosts)
 if not ALLOWED_HOSTS and not DEBUG:
