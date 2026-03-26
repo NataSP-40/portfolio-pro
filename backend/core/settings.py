@@ -55,11 +55,13 @@ def _env_required(name):
 # SECURITY WARNING: keep the secret key used in production secret.
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 _default_allowed_hosts = 'localhost,127.0.0.1' if DEBUG else ''
-ALLOWED_HOSTS = _env_list('DJANGO_ALLOWED_HOSTS', _default_allowed_hosts)
-if not ALLOWED_HOSTS and not DEBUG:
-    raise ImproperlyConfigured(
-        'DJANGO_ALLOWED_HOSTS must be set when DJANGO_DEBUG is False.'
-    )
+
+ALLOWED_HOSTS = []
+
+# This automatically adds Render URL to the VIP list if it exists in the environment
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 # Production security settings
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
