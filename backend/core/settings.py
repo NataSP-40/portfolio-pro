@@ -11,9 +11,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
+import dj_database_url
 from pathlib import Path
 from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
+
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,10 +27,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # -- SECURITY WARNINGS --
-# 1. pull the key from the .env file
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
-
-# 2. Strict check for debug mode
 DEBUG = os.environ.get('DJANGO_DEBUG') == 'True'
 
 def _env_bool(name, default=False):
@@ -47,19 +45,15 @@ def _env_list(name, default=''):
     return [item.strip() for item in value.split(',') if item.strip()]
 
 
-# SECURITY WARNING: keep debug off in production.
-# DEBUG = _env_bool('DJANGO_DEBUG', True)
+def _env_required(name):
+    value = os.getenv(name)
+    if not value:
+        raise ImproperlyConfigured(f'{name} environment variable must be set.')
+    return value
+
 
 # SECURITY WARNING: keep the secret key used in production secret.
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
-if not SECRET_KEY:
-    if DEBUG:
-        SECRET_KEY = 'django-insecure-hc)y8kp07+sc@z8ab)c7manyjung$3w@svh3e14pjdy+*sakj6'
-    else:
-        raise ImproperlyConfigured(
-            'DJANGO_SECRET_KEY must be set when DJANGO_DEBUG is False.'
-        )
-
+SECRET_KEY = _env_required('DJANGO_SECRET_KEY')
 _default_allowed_hosts = 'localhost,127.0.0.1' if DEBUG else ''
 ALLOWED_HOSTS = _env_list('DJANGO_ALLOWED_HOSTS', _default_allowed_hosts)
 if not ALLOWED_HOSTS and not DEBUG:
@@ -109,6 +103,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # for serving static files in production
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -134,13 +129,21 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.getenv('DB_NAME', str(BASE_DIR / 'db.sqlite3')),
     }
 }
 
+# 2. Let dj_database_url do the heavy lifting. 
+# It checks for a 'DATABASE_URL' environment variable.
+# If it finds one (like on Render), it overwrites the SQLite settings.
+db_from_env = dj_database_url.config(conn_max_age=600, conn_health_checks=True)
+
+if db_from_env:
+    DATABASES['default'].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
