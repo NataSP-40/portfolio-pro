@@ -8,9 +8,11 @@ Portfolio Pro is a modern, responsive developer portfolio that showcases profile
 
 ## Live Link
 
-Frontend: https://your-frontend-domain.vercel.app
+[Natalia Pricop](https://www.nataliapricop.com/)
 
-Backend API: https://your-backend-domain.onrender.com/api
+Frontend: Vercel
+
+Backend API: Render
 
 ## Tech Stack
 
