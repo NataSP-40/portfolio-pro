@@ -2,6 +2,7 @@
 /* This makes the scroll animation smooth instead of instant jumping */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 6.5rem;
 }
 
 #root {

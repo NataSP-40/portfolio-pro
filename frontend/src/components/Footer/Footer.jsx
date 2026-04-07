@@ -2,12 +2,12 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-800 text-white py-8 mt-20">
-      <div className="max-w-7xl mx-auto px-4 text-center">
-        <p className="text-gray-300">
+    <footer className="mt-20 border-t border-[#e6e9df] py-8 font-['Inter']">
+      <div className="mx-auto max-w-7xl px-4 text-center">
+        <p className="text-[#2b2a27]">
           © {currentYear} Natalia Pricop. All rights reserved.
         </p>
-        <p className="text-gray-400 text-sm mt-2">
+        <p className="mt-2 text-sm text-[#4a4944]">
           Built with React, Django, and Tailwind CSS
         </p>
       </div>

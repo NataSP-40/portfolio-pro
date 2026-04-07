@@ -1,124 +1,133 @@
-import { getMediaUrl } from "../../services";
-import { FaLinkedinIn, FaGithub } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { fetchProfileContent } from "../../services";
 
-const Profile = ({
-  profileData,
-  loading,
-  error,
-  contactInfo,
-  contactLoading,
-  contactError,
-}) => {
-  const profileImageUrl = getMediaUrl(profileData?.profile_image);
+const Profile = () => {
+  const [profileData, setProfileData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  if (loading) return <div className="text-center">Loading...</div>;
-  if (error) return <div className="text-center text-red-600">{error}</div>;
-  if (!profileData) return <div className="text-center">No profile found.</div>;
+  useEffect(() => {
+    let isMounted = true;
+
+    // Fetch profile content through the shared service layer.
+    const fetchProfileData = async () => {
+      try {
+        const payload = await fetchProfileContent();
+
+        if (isMounted) {
+          setProfileData(payload || null);
+          setError("");
+        }
+      } catch (fetchError) {
+        if (isMounted) {
+          setError(
+            fetchError?.response?.data?.detail ||
+              fetchError.message ||
+              "Profile failed to load.",
+          );
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchProfileData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  if (loading) {
+    return (
+      <section
+        id="profile"
+        className="mx-auto flex min-h-[60vh] w-full max-w-5xl items-center justify-center px-6 py-20 text-center"
+      >
+        <p
+          className="text-lg text-[#4a4944]"
+          style={{ fontFamily: "Inter, sans-serif" }}
+        >
+          Loading profile...
+        </p>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section
+        id="profile"
+        className="mx-auto flex min-h-[60vh] w-full max-w-5xl items-center justify-center px-6 py-20 text-center"
+      >
+        <p
+          className="text-lg text-[#4a4944]"
+          style={{ fontFamily: "Inter, sans-serif" }}
+        >
+          {error}
+        </p>
+      </section>
+    );
+  }
+
+  const headline = profileData?.headline || "Your headline";
+  const title = profileData?.title;
+  const subheadline = profileData?.subheadline || "Your subheadline goes here.";
+  const primaryButton = profileData?.primary_button;
+  const secondaryButton = profileData?.secondary_button;
 
   return (
-    <div className="min-h-screen">
-      <section className="py-10 px-6 md:min-h-[90vh]">
-        <div className="mx-auto flex max-w-7xl flex-col gap-12">
-          <div className="grid grid-cols-1 gap-10 md:grid-cols-[20rem_minmax(0,1fr)] md:items-center">
-            <div className="group flex flex-col items-center">
-              <div className="relative inline-block">
-                {profileImageUrl ? (
-                  <img
-                    src={profileImageUrl}
-                    alt={profileData.name}
-                    className="w-75 h-75 rounded-full object-cover shadow-2xl border-4 border-white transition-transform duration-500 group-hover:scale-105"
-                  />
-                ) : (
-                  <div className="w-75 h-75 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-5xl font-bold shadow-xl border-4 border-white transition-transform duration-500 group-hover:scale-105">
-                    {(profileData.name || "?").charAt(0).toUpperCase()}
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-indigo-400 rounded-full blur-2xl opacity-20 -z-10 group-hover:opacity-40 transition-opacity"></div>
-              </div>
-
-              {!contactLoading && !contactError && (
-                <div className="mt-5 flex justify-center gap-3">
-                  {contactInfo?.linkedin_link && (
-                    <a
-                      href={contactInfo.linkedin_link}
-                      aria-label="LinkedIn profile"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 rounded-full text-slate-500 hover:text-indigo-700 hover:bg-indigo-50 transition-colors"
-                    >
-                      <FaLinkedinIn size={32} />
-                    </a>
-                  )}
-
-                  {contactInfo?.github_link && (
-                    <a
-                      href={contactInfo.github_link}
-                      aria-label="GitHub profile"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 rounded-full text-slate-500 hover:text-indigo-700 hover:bg-indigo-50 transition-colors"
-                    >
-                      <FaGithub size={32} />
-                    </a>
-                  )}
-                </div>
-              )}
-            </div>
-
-            <div className="text-center md:text-left">
-              <h1 className="text-5xl md:text-6xl font-extrabold text-slate-900 mb-6 tracking-tight">
-                Hello, I am{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-900 to-violet-900">
-                  {profileData.name}
-                </span>
-              </h1>
-
-              <h2 className="text-2xl md:text-3xl font-semibold text-slate-700 mb-8 italic">
-                {profileData.title}
-              </h2>
-
-              <p className="text-xl text-slate-600 mb-12 leading-relaxed max-w-2xl mx-auto md:mx-0">
-                {profileData.hero_statement}
-              </p>
-
-              <div className="flex flex-wrap justify-center md:justify-start gap-6">
-                <a
-                  href="#projects"
-                  className="bg-white text-violet-900 border-2 border-violet-900 px-10 py-4 rounded-xl font-bold hover:bg-purple-50 hover:-translate-y-1 transition-all duration-300"
-                >
-                  View My Work
-                </a>
-
-                <a
-                  href="#contact"
-                  className="bg-white text-violet-900 border-2 border-violet-900 px-10 py-4 rounded-xl font-bold hover:bg-purple-50 hover:-translate-y-1 transition-all duration-300"
-                >
-                  Get in Touch
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <section
-            id="about"
-            className="relative left-1/2 -translate-x-1/2 mt-6 md:mt-10 bg-white/80 backdrop-blur-sm p-6 md:p-8 lg:p-10 rounded-2xl md:rounded-3xl shadow-xl border border-slate-100 w-[92vw] md:w-[90vw] lg:w-[88vw]"
+    <section
+      id="profile"
+      className="scroll-mt-28 mx-auto w-full max-w-6xl px-6 py-24 text-center md:px-10 md:py-32"
+    >
+      <article className="mx-auto max-w-5xl">
+        <header>
+          <h1
+            className="text-5xl font-bold leading-[0.95] tracking-[-0.03em] text-[#2b2a27] sm:text-6xl md:text-7xl lg:text-8xl"
+            style={{ fontFamily: "Space Grotesk, sans-serif" }}
           >
-            <div className="space-y-4 md:space-y-6 text-left">
-              <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight">
-                About{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-900 to-violet-900">
-                  Me
-                </span>
-              </h3>
-              <div className="h-2 w-20 bg-indigo-600 rounded-full"></div>
-              <p className="text-lg text-slate-700 leading-relaxed italic border-l-4 border-indigo-100 pl-6">
-                {profileData.about_me || profileData.bio}
-              </p>
-            </div>
-          </section>
+            {headline}
+          </h1>
+
+          {title && (
+            <h2
+              className="mx-auto mt-5 max-w-3xl text-xl font-semibold text-[#2b2a27] md:text-2xl"
+              style={{ fontFamily: "Inter, sans-serif" }}
+            >
+              {title}
+            </h2>
+          )}
+
+          <p
+            className="mx-auto mt-8 max-w-3xl text-lg leading-relaxed text-[#4a4944] md:text-xl"
+            style={{ fontFamily: "Inter, sans-serif" }}
+          >
+            {subheadline}
+          </p>
+        </header>
+
+        <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
+          <a
+            href={primaryButton?.href || "#projects"}
+            className="rounded-md bg-[#2b2a27] px-6 py-3 text-base font-medium text-white transition-opacity hover:opacity-90 hover:text-white"
+            style={{ fontFamily: "Inter, sans-serif" }}
+          >
+            {primaryButton?.label || "View My Work"}
+          </a>
+
+          <a
+            href={secondaryButton?.href || "#contact"}
+            className="rounded-md border border-[#2b2a27] bg-transparent px-7 py-3 text-base font-medium text-[#2b2a27] transition-colors duration-200 hover:bg-[#2b2a27] hover:text-[#f3f5ed]"
+            style={{ fontFamily: "Inter, sans-serif" }}
+          >
+            {secondaryButton?.label || "Get in Touch"}
+          </a>
         </div>
-      </section>
-    </div>
+      </article>
+    </section>
   );
 };
 
