@@ -35,7 +35,13 @@ class ResumeAdmin(admin.ModelAdmin):
 	def save_model(self, request, obj, form, change):
 		with transaction.atomic():
 			if obj.is_active:
-				Resume.objects.filter(is_active=True).exclude(pk=obj.pk).update(
-					is_active=False
+				current_active = (
+					Resume.objects.select_for_update()
+					.filter(is_active=True)
+					.exclude(pk=obj.pk)
+					.first()
 				)
+				if current_active:
+					current_active.is_active = False
+					current_active.save(update_fields=["is_active", "updated_at"])
 			super().save_model(request, obj, form, change)

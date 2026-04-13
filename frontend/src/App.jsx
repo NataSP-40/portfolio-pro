@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import "./App.css";
-import useApiClient from "./api.js";
+import useApiClient from "./hooks/useApiClient.js";
 import { fetchContactInfo, fetchProfile } from "./services.js";
 import Profile from "./components/Profile/Profile.jsx";
 import Navbar from "./components/Navbar/Navbar.jsx";
 import Contact from "./components/Contact/Contact.jsx";
 import Footer from "./components/Footer/Footer.jsx";
 import Projects from "./components/Projects/Projects.jsx";
-import TechnicalStack from "./components/TechnicalStack/TechnicalStack.jsx";
+import About from "./components/About/About.jsx";
 
 function App() {
   const {
@@ -36,11 +36,11 @@ function App() {
   const contactInfo = Array.isArray(contact) ? contact[0] : contact;
 
   return (
-    <div className="min-h-screen bg-softwhite">
+    <div className="min-h-screen bg-surface text-ink">
       <Navbar />
       <main className="max-w-7xl mx-auto py-10">
         {/* Section 1: Profile */}
-        <section id="profile">
+        <section>
           <Profile
             profileData={profileData}
             loading={profileLoading}
@@ -51,22 +51,18 @@ function App() {
           />
         </section>
 
-        {/* Section 2: Projects */}
-        <section id="projects" className="mt-10">
+        {/* Section 2: About */}
+        <section className="mt-10">
+          <About profileData={profileData} />
+        </section>
+
+        {/* Section 3: Projects */}
+        <section className="mt-10">
           <Projects />
         </section>
 
-        {/* Section 3: Technical Stack */}
-        <section id="skills" className="mt-20">
-          <TechnicalStack
-            profileData={profileData}
-            loading={profileLoading}
-            error={profileError}
-          />
-        </section>
-
         {/* Section 4: Contact */}
-        <section id="contact" className="mt-20">
+        <section className="mt-20">
           <Contact
             contactInfo={contactInfo}
             contactLoading={contactLoading}
