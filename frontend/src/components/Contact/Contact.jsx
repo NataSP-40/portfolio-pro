@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchContactInfo, submitMessage } from "../../services/api.js";
+import { fetchContactInfo, sendMessage } from "../../services";
 
 const initialFormState = {
   sender_name: "",
@@ -52,7 +52,7 @@ const Contact = () => {
     setSubmitError("");
 
     try {
-      await submitMessage(formData);
+      await sendMessage(formData);
       setSubmitSuccess(true);
       setFormData(initialFormState);
     } catch (error) {

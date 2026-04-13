@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { fetchNavbarContent } from "../../services";
+import { fetchNavbarContent, fetchResume } from "../../services";
+import useApiClient from "../../hooks/useApiClient";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [navbarData, setNavbarData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { data: resumeData, request: requestResume } = useApiClient();
 
   useEffect(() => {
     let isMounted = true;
@@ -42,6 +44,18 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
+    const loadResume = async () => {
+      try {
+        await requestResume(fetchResume);
+      } catch {
+        // Resume is optional in nav; hide CTA silently when unavailable.
+      }
+    };
+
+    loadResume();
+  }, [requestResume]);
+
+  useEffect(() => {
     const closeMenuOnDesktop = () => {
       if (window.innerWidth >= 768) {
         setIsOpen(false);
@@ -58,6 +72,7 @@ const Navbar = () => {
     return value !== "skills";
   });
   const logoText = navbarData?.logo_text || "Logo";
+  const resumeUrl = resumeData?.resume_url;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#2b2a27]/10 bg-[#f3f5ed]/85 backdrop-blur-md">
@@ -116,6 +131,20 @@ const Navbar = () => {
                 </a>
               </li>
             ))}
+
+          {!loading && !error && resumeUrl && (
+            <li>
+              <a
+                href={resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full border border-[#2b2a27] bg-transparent px-4 py-1 text-sm font-medium text-[#2b2a27] transition-colors duration-200 hover:bg-[#e6e9df]"
+                style={{ fontFamily: "Inter, sans-serif" }}
+              >
+                Hire Me
+              </a>
+            </li>
+          )}
         </ul>
       </nav>
 
@@ -140,6 +169,21 @@ const Navbar = () => {
                 </a>
               </li>
             ))}
+
+          {!loading && !error && resumeUrl && (
+            <li>
+              <a
+                href={resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setIsOpen(false)}
+                className="inline-block rounded-full border border-[#2b2a27] bg-transparent px-4 py-1 text-sm font-medium text-[#2b2a27] transition-colors duration-200 hover:bg-[#e6e9df]"
+                style={{ fontFamily: "Inter, sans-serif" }}
+              >
+                Hire Me
+              </a>
+            </li>
+          )}
 
           {loading && (
             <li

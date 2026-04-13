@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import "./App.css";
-import useApiClient from "./api.js";
+import useApiClient from "./hooks/useApiClient.js";
 import { fetchContactInfo, fetchProfile } from "./services.js";
 import Profile from "./components/Profile/Profile.jsx";
 import Navbar from "./components/Navbar/Navbar.jsx";
