@@ -51,14 +51,14 @@ function App() {
           />
         </section>
 
-        {/* Section 2: About */}
-        <section className="mt-10">
-          <About profileData={profileData} />
-        </section>
-
-        {/* Section 3: Projects */}
+        {/* Section 2: Projects */}
         <section className="mt-10">
           <Projects />
+        </section>
+
+        {/* Section 3: About */}
+        <section className="mt-10">
+          <About profileData={profileData} />
         </section>
 
         {/* Section 4: Contact */}
