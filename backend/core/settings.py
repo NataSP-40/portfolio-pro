@@ -18,16 +18,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
-
-# -- SECURITY WARNINGS --
-DEBUG = os.environ.get('DJANGO_DEBUG') == 'True'
 
 def _env_bool(name, default=False):
     return os.getenv(name, str(default)).strip().lower() in {
@@ -38,6 +28,17 @@ def _env_bool(name, default=False):
         'y',
         'on',
     }
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+
+
+# -- SECURITY WARNINGS --
+DEBUG = _env_bool('DJANGO_DEBUG', _env_bool('DEBUG', False))
 
 
 def _env_list(name, default=''):
@@ -198,4 +199,12 @@ CLOUDINARY_STORAGE = {
     'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
     'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
 }
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+STORAGES = {
+    'default': {
+        'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
