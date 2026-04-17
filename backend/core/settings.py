@@ -89,9 +89,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'cloudinary_storage',
     'django.contrib.staticfiles',
     'cloudinary',
+    'cloudinary_storage',
     'rest_framework',
     'corsheaders',
     'projects',
@@ -134,18 +134,11 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite3'),
-        conn_max_age=600 # This keeps the connection open for faster requests
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+        conn_health_checks=True,
     )
 }
-
-# 2. Let dj_database_url do the heavy lifting. 
-# It checks for a 'DATABASE_URL' environment variable.
-# If it finds one (like on Render), it overwrites the SQLite settings.
-db_from_env = dj_database_url.config(conn_max_age=600, conn_health_checks=True)
-
-if db_from_env:
-    DATABASES['default'].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
