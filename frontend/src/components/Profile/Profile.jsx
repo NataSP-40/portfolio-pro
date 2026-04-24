@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
-import { fetchProfileContent } from "../../services";
+import { fetchProfileContent, fetchResume } from "../../services";
+import { GitHubIcon, LinkedInIcon } from "../SocialIcons/SocialIcons";
 
-const Profile = () => {
+const profileSocialLinkClassName =
+  "inline-flex h-11 w-11 items-center justify-center rounded-full border border-ink/25 text-ink transition-colors duration-200 hover:border-ink hover:bg-ink hover:text-surface";
+
+const Profile = ({ contactInfo, contactLoading, contactError }) => {
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [resumeUrl, setResumeUrl] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
 
-    // Fetch profile content through the shared service layer.
     const fetchProfileData = async () => {
       try {
         const payload = await fetchProfileContent();
@@ -33,7 +37,20 @@ const Profile = () => {
       }
     };
 
+    const fetchResumeUrl = async () => {
+      try {
+        const response = await fetchResume();
+        const url = response?.data?.resume_url;
+        if (isMounted && url) {
+          setResumeUrl(url);
+        }
+      } catch {
+        // resume unavailable — button remains hidden
+      }
+    };
+
     fetchProfileData();
+    fetchResumeUrl();
 
     return () => {
       isMounted = false;
@@ -46,10 +63,7 @@ const Profile = () => {
         id="profile"
         className="mx-auto flex min-h-[60vh] w-full max-w-5xl items-center justify-center px-6 py-20 text-center"
       >
-        <p
-          className="text-lg text-[#4a4944]"
-          style={{ fontFamily: "Inter, sans-serif" }}
-        >
+        <p className="font-body text-base text-ink-muted md:text-lg">
           Loading profile...
         </p>
       </section>
@@ -62,12 +76,7 @@ const Profile = () => {
         id="profile"
         className="mx-auto flex min-h-[60vh] w-full max-w-5xl items-center justify-center px-6 py-20 text-center"
       >
-        <p
-          className="text-lg text-[#4a4944]"
-          style={{ fontFamily: "Inter, sans-serif" }}
-        >
-          {error}
-        </p>
+        <p className="font-body text-base text-ink-muted md:text-lg">{error}</p>
       </section>
     );
   }
@@ -85,26 +94,17 @@ const Profile = () => {
     >
       <article className="mx-auto max-w-5xl">
         <header>
-          <h1
-            className="text-5xl font-bold leading-[0.95] tracking-[-0.03em] text-[#2b2a27] sm:text-6xl md:text-7xl lg:text-8xl"
-            style={{ fontFamily: "Space Grotesk, sans-serif" }}
-          >
+          <h1 className="font-display text-4xl font-light leading-[0.98] tracking-[0.08em] text-ink sm:text-5xl md:text-6xl lg:text-7xl">
             {headline}
           </h1>
 
           {title && (
-            <h2
-              className="mx-auto mt-5 max-w-3xl text-xl font-semibold text-[#2b2a27] md:text-2xl"
-              style={{ fontFamily: "Inter, sans-serif" }}
-            >
+            <h2 className="font-display mx-auto mt-6 max-w-3xl text-base font-normal uppercase tracking-[0.2em] text-ink-muted md:text-lg">
               {title}
             </h2>
           )}
 
-          <p
-            className="mx-auto mt-8 max-w-3xl text-lg leading-relaxed text-[#4a4944] md:text-xl"
-            style={{ fontFamily: "Inter, sans-serif" }}
-          >
+          <p className="font-body mx-auto mt-8 max-w-3xl text-lg leading-relaxed text-ink-muted md:text-xl">
             {subheadline}
           </p>
         </header>
@@ -112,20 +112,50 @@ const Profile = () => {
         <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
           <a
             href={primaryButton?.href || "#projects"}
-            className="rounded-md bg-[#2b2a27] px-6 py-3 text-base font-medium text-white transition-opacity hover:opacity-90 hover:text-white"
-            style={{ fontFamily: "Inter, sans-serif" }}
+            className="font-body rounded-sm bg-ink px-6 py-3 text-sm font-medium uppercase tracking-[0.12em] text-surface transition-opacity hover:opacity-90 hover:text-surface"
           >
             {primaryButton?.label || "View My Work"}
           </a>
 
-          <a
-            href={secondaryButton?.href || "#contact"}
-            className="rounded-md border border-[#2b2a27] bg-transparent px-7 py-3 text-base font-medium text-[#2b2a27] transition-colors duration-200 hover:bg-[#2b2a27] hover:text-[#f3f5ed]"
-            style={{ fontFamily: "Inter, sans-serif" }}
-          >
-            {secondaryButton?.label || "Get in Touch"}
-          </a>
+          {resumeUrl && (
+            <a
+              href={resumeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-body rounded-sm border border-ink bg-transparent px-7 py-3 text-sm font-medium uppercase tracking-[0.12em] text-ink transition-colors duration-200 hover:bg-ink hover:text-surface"
+            >
+              View Resume
+            </a>
+          )}
         </div>
+
+        {!contactLoading && !contactError && (contactInfo?.linkedin_link || contactInfo?.github_link) && (
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+            {contactInfo?.linkedin_link && (
+              <a
+                href={contactInfo.linkedin_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={profileSocialLinkClassName}
+                aria-label="LinkedIn profile"
+              >
+                <LinkedInIcon size={20} />
+              </a>
+            )}
+
+            {contactInfo?.github_link && (
+              <a
+                href={contactInfo.github_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={profileSocialLinkClassName}
+                aria-label="GitHub profile"
+              >
+                <GitHubIcon size={20} />
+              </a>
+            )}
+          </div>
+        )}
       </article>
     </section>
   );
