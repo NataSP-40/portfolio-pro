@@ -1,7 +1,15 @@
 import axios from "axios";
 
+const envApiUrl = (import.meta.env.VITE_API_URL || "").trim();
+
 const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+  envApiUrl || (import.meta.env.DEV ? "http://localhost:8000/api" : "");
+
+if (!API_BASE_URL) {
+  throw new Error(
+    "Missing VITE_API_URL in production build. Set VITE_API_URL to your deployed backend API root (for example: https://your-backend.onrender.com/api).",
+  );
+}
 
 const normalizedApiBaseUrl = API_BASE_URL.replace(/\/+$/, "");
 

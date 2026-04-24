@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import { fetchContactInfo, sendMessage } from "../../services";
+import { GitHubIcon, LinkedInIcon } from "../SocialIcons/SocialIcons";
 
 const initialFormState = {
   sender_name: "",
   sender_email: "",
   sender_message: "",
 };
+
+const socialLinkClassName =
+  "inline-flex items-center gap-2 underline decoration-transparent underline-offset-4 transition hover:text-ink hover:decoration-ink";
 
 const Contact = () => {
   const [contactInfo, setContactInfo] = useState(null);
@@ -65,38 +69,40 @@ const Contact = () => {
   return (
     <section
       id="contact"
-      className="scroll-mt-28 mx-auto w-[92vw] rounded-2xl bg-[#f3f5ed] px-5 py-8 text-[#2b2a27] md:w-[90vw] md:px-8 md:py-12 lg:w-[88vw]"
+      className="scroll-mt-28 mx-auto w-[92vw] rounded-xl border border-line/60 bg-surface px-5 py-8 text-ink md:w-[90vw] md:px-8 md:py-12 lg:w-[88vw]"
       aria-labelledby="contact-section-title"
     >
       <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-16">
         <article className="space-y-6">
           <h2
             id="contact-section-title"
-            className="font-['Space_Grotesk'] text-4xl font-bold tracking-tight text-[#2b2a27]"
+            className="font-display text-3xl font-light uppercase tracking-[0.2em] text-ink md:text-4xl"
           >
             Let&apos;s Connect
           </h2>
 
           {contactLoading && (
-            <p className="font-['Inter'] text-base leading-relaxed text-[#2b2a27]">
+            <p className="font-body text-base leading-relaxed text-ink-muted">
               Loading contact information...
             </p>
           )}
 
           {!contactLoading && contactError && (
-            <p className="font-['Inter'] text-base leading-relaxed text-[#2b2a27]">
+            <p className="font-body text-base leading-relaxed text-ink-muted">
               {contactError}
             </p>
           )}
 
           {!contactLoading && !contactError && (
-            <address className="not-italic font-['Inter'] text-base leading-relaxed text-[#2b2a27]">
+            <address className="font-body not-italic text-base leading-relaxed text-ink-muted">
               {contactInfo?.email && (
                 <p className="mb-3 break-words">
-                  <span className="font-semibold">Email: </span>
+                  <span className="font-display text-xs font-medium uppercase tracking-[0.14em] text-ink">
+                    Email:{" "}
+                  </span>
                   <a
                     href={`mailto:${contactInfo.email}`}
-                    className="underline decoration-transparent underline-offset-4 transition hover:decoration-[#2b2a27]"
+                    className="underline decoration-transparent underline-offset-4 transition hover:text-ink hover:decoration-ink"
                   >
                     {contactInfo.email}
                   </a>
@@ -105,42 +111,46 @@ const Contact = () => {
 
               {contactInfo?.phone_number && (
                 <p className="mb-3">
-                  <span className="font-semibold">Phone: </span>
+                  <span className="font-display text-xs font-medium uppercase tracking-[0.14em] text-ink">
+                    Phone:{" "}
+                  </span>
                   <a
                     href={`tel:${contactInfo.phone_number}`}
-                    className="underline decoration-transparent underline-offset-4 transition hover:decoration-[#2b2a27]"
+                    className="underline decoration-transparent underline-offset-4 transition hover:text-ink hover:decoration-ink"
                   >
                     {contactInfo.phone_number}
                   </a>
                 </p>
               )}
 
-              {contactInfo?.linkedin_link && (
-                <p className="mb-3">
-                  <span className="font-semibold">LinkedIn: </span>
-                  <a
-                    href={contactInfo.linkedin_link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline decoration-transparent underline-offset-4 transition hover:decoration-[#2b2a27]"
-                  >
-                    View profile
-                  </a>
-                </p>
-              )}
+              {(contactInfo?.linkedin_link || contactInfo?.github_link) && (
+                <div className="flex flex-wrap items-center justify-center gap-4 pt-1 text-center">
+                  {contactInfo?.linkedin_link && (
+                    <a
+                      href={contactInfo.linkedin_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={socialLinkClassName}
+                      aria-label="LinkedIn profile"
+                    >
+                    <LinkedInIcon size={18} />
+                      <span>LinkedIn</span>
+                    </a>
+                  )}
 
-              {contactInfo?.github_link && (
-                <p>
-                  <span className="font-semibold">GitHub: </span>
-                  <a
-                    href={contactInfo.github_link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline decoration-transparent underline-offset-4 transition hover:decoration-[#2b2a27]"
-                  >
-                    View repository profile
-                  </a>
-                </p>
+                  {contactInfo?.github_link && (
+                    <a
+                      href={contactInfo.github_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={socialLinkClassName}
+                      aria-label="GitHub profile"
+                    >
+                      <GitHubIcon size={18} />
+                      <span>GitHub</span>
+                    </a>
+                  )}
+                </div>
               )}
             </address>
           )}
@@ -149,14 +159,14 @@ const Contact = () => {
         <article>
           {submitSuccess ? (
             <div
-              className="rounded-2xl bg-[#e6e9df] p-8"
+              className="rounded-xl border border-line/60 bg-[#ebe5da] p-8"
               role="status"
               aria-live="polite"
             >
-              <h3 className="font-['Space_Grotesk'] text-2xl font-bold text-[#2b2a27]">
+              <h3 className="font-display text-xl font-medium uppercase tracking-[0.12em] text-ink md:text-2xl">
                 Thank you for reaching out.
               </h3>
-              <p className="mt-3 font-['Inter'] text-base leading-relaxed text-[#2b2a27]">
+              <p className="font-body mt-3 text-base leading-relaxed text-ink-muted">
                 Your message landed safely in my inbox. I appreciate your time
                 and will get back to you soon.
               </p>
@@ -166,7 +176,7 @@ const Contact = () => {
               <div>
                 <label
                   htmlFor="sender_name"
-                  className="mb-2 block font-['Inter'] text-sm font-medium text-[#2b2a27]"
+                  className="font-body mb-2 block text-xs font-medium uppercase tracking-[0.12em] text-ink"
                 >
                   Name
                 </label>
@@ -178,14 +188,14 @@ const Contact = () => {
                   value={formData.sender_name}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-lg bg-[#e6e9df] px-4 py-3 font-['Inter'] text-[#2b2a27] focus:outline-none focus:ring-2 focus:ring-[#2b2a27]"
+                  className="font-body w-full rounded-lg border border-line/70 bg-[#f2eee6] px-4 py-3 text-ink focus:outline-none focus:ring-2 focus:ring-ink"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="sender_email"
-                  className="mb-2 block font-['Inter'] text-sm font-medium text-[#2b2a27]"
+                  className="font-body mb-2 block text-xs font-medium uppercase tracking-[0.12em] text-ink"
                 >
                   Email
                 </label>
@@ -197,14 +207,14 @@ const Contact = () => {
                   value={formData.sender_email}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-lg bg-[#e6e9df] px-4 py-3 font-['Inter'] text-[#2b2a27] focus:outline-none focus:ring-2 focus:ring-[#2b2a27]"
+                  className="font-body w-full rounded-lg border border-line/70 bg-[#f2eee6] px-4 py-3 text-ink focus:outline-none focus:ring-2 focus:ring-ink"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="sender_message"
-                  className="mb-2 block font-['Inter'] text-sm font-medium text-[#2b2a27]"
+                  className="font-body mb-2 block text-xs font-medium uppercase tracking-[0.12em] text-ink"
                 >
                   Message
                 </label>
@@ -216,21 +226,21 @@ const Contact = () => {
                   onChange={handleChange}
                   required
                   rows={4}
-                  className="w-full rounded-lg bg-[#e6e9df] px-4 py-3 font-['Inter'] text-[#2b2a27] focus:outline-none focus:ring-2 focus:ring-[#2b2a27]"
+                  className="font-body w-full rounded-lg border border-line/70 bg-[#f2eee6] px-4 py-3 text-ink focus:outline-none focus:ring-2 focus:ring-ink"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="rounded-md bg-[#2b2a27] px-6 py-3 font-['Inter'] text-base font-medium text-[#f3f5ed] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
+                className="font-body rounded-sm bg-ink px-6 py-3 text-sm font-medium uppercase tracking-[0.12em] text-surface transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
               >
                 {isSubmitting ? "Sending..." : "Send Message"}
               </button>
 
               {submitError && (
                 <p
-                  className="font-['Inter'] text-sm text-[#2b2a27]"
+                  className="font-body text-sm text-ink-muted"
                   role="alert"
                   aria-live="polite"
                 >

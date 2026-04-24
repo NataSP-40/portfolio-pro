@@ -36,7 +36,7 @@ export const fetchProfileContent = async () => {
   return {
     headline:
       profile?.headline ||
-      (profile?.name ? `Hello, I am ${profile.name}` : "Your headline"),
+      (profile?.name ? `${profile.name}` : "Your headline"),
     title: profile?.title || "",
     subheadline:
       profile?.subheadline ||

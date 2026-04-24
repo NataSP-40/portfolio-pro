@@ -1,0 +1,12 @@
+<svg viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg" id="svg-3" width="640" height="360"><style>
+      @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300&amp;family=Josefin+Sans:wght@200&amp;family=Raleway:wght@100;200&amp;family=Montserrat:wght@100;200&amp;display=swap');
+    </style>
+        <!-- Left vertical rule -->
+        <rect width="640" height="360" fill="#f7f4ef"></rect><line x1="210" y1="138" x2="210" y2="228" stroke="#0a0a0a" stroke-width="0.8"></line>
+        <!-- NATALIA stacked large -->
+        <text x="340" y="185" font-family="'Montserrat', sans-serif" font-size="44" font-weight="100" letter-spacing="12" fill="#0a0a0a" text-anchor="middle" dominant-baseline="auto">NATALIA</text>
+        <!-- Thin hairline under first name -->
+        <line x1="228" y1="196" x2="452" y2="196" stroke="#0a0a0a" stroke-width="0.5" opacity="0.4"></line>
+        <!-- PRICOP small -->
+        <text x="340" y="218" font-family="'Montserrat', sans-serif" font-size="13" font-weight="200" letter-spacing="15.5" fill="#0a0a0a" text-anchor="middle" dominant-baseline="auto">PRICOP</text>
+      </svg>

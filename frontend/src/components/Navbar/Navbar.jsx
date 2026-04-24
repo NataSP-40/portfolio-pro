@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchNavbarContent, fetchResume } from "../../services";
 import useApiClient from "../../hooks/useApiClient";
+import logoMark from "../../assets/logo/np-logo.svg";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -57,7 +58,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const closeMenuOnDesktop = () => {
-      if (window.innerWidth >= 768) {
+      if (window.innerWidth >= 1024) {
         setIsOpen(false);
       }
     };
@@ -69,53 +70,56 @@ const Navbar = () => {
   const navLinks = Array.isArray(navbarData?.links) ? navbarData.links : [];
   const filteredNavLinks = navLinks.filter((link) => {
     const value = (link?.label || link?.title || "").trim().toLowerCase();
-    return value !== "skills";
+    const href = (link?.href || "").trim().toLowerCase();
+
+    return (
+      value !== "skills" &&
+      value !== "home" &&
+      href !== "#home" &&
+      href !== "#profile"
+    );
   });
   const logoText = navbarData?.logo_text || "Logo";
   const resumeUrl = resumeData?.resume_url;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-[#2b2a27]/10 bg-[#f3f5ed]/85 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-ink/10 bg-surface/85 backdrop-blur-md">
       <nav
-        className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-4 md:px-10"
+        className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-3 md:px-10 md:py-4"
         aria-label="Main navigation"
       >
         <a
           href="#profile"
-          className="text-2xl font-bold tracking-tight text-[#2b2a27] font-['Space_Grotesk',sans-serif]"
+          className="inline-flex items-center"
+          aria-label={logoText}
         >
-          {loading ? "Loading..." : logoText}
+          <img
+            src={logoMark}
+            alt={logoText}
+            className="h-20 w-auto max-w-none md:h-24"
+          />
         </a>
 
         <button
           type="button"
           onClick={() => setIsOpen((open) => !open)}
-          className="rounded-md border border-[#2b2a27]/20 px-3 py-2 text-sm font-medium text-[#2b2a27] md:hidden"
+          className="font-body rounded-sm border border-ink/20 px-3 py-2 text-xs font-medium uppercase tracking-[0.16em] text-ink lg:hidden"
           aria-label="Toggle navigation menu"
           aria-expanded={isOpen}
           aria-controls="mobile-navigation"
-          style={{ fontFamily: "Inter, sans-serif" }}
         >
           Menu
         </button>
 
-        <ul className="hidden items-center gap-8 md:flex">
+        <ul className="hidden items-center gap-6 lg:flex">
           {loading && (
-            <li
-              className="text-sm text-[#4a4944]"
-              style={{ fontFamily: "Inter, sans-serif" }}
-            >
+            <li className="font-body text-sm text-ink-muted">
               Loading navigation...
             </li>
           )}
 
           {!loading && error && (
-            <li
-              className="text-sm text-[#4a4944]"
-              style={{ fontFamily: "Inter, sans-serif" }}
-            >
-              {error}
-            </li>
+            <li className="font-body text-sm text-ink-muted">{error}</li>
           )}
 
           {!loading &&
@@ -124,8 +128,7 @@ const Navbar = () => {
               <li key={link.id || `${link.href}-${index}`}>
                 <a
                   href={link.href || "#"}
-                  className="text-base font-medium text-[#4a4944] transition-colors duration-200 hover:text-[#2b2a27]"
-                  style={{ fontFamily: "Inter, sans-serif" }}
+                  className="font-body text-xs font-medium uppercase tracking-[0.14em] text-ink-muted transition-colors duration-200 hover:text-ink"
                 >
                   {link.label}
                 </a>
@@ -138,8 +141,7 @@ const Navbar = () => {
                 href={resumeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full border border-[#2b2a27] bg-transparent px-4 py-1 text-sm font-medium text-[#2b2a27] transition-colors duration-200 hover:bg-[#e6e9df]"
-                style={{ fontFamily: "Inter, sans-serif" }}
+                className="font-body rounded-full border border-ink bg-transparent px-4 py-1 text-xs font-medium uppercase tracking-[0.14em] text-ink transition-colors duration-200 hover:bg-[#ebe5da]"
               >
                 Hire Me
               </a>
@@ -150,7 +152,7 @@ const Navbar = () => {
 
       <div
         id="mobile-navigation"
-        className={`overflow-hidden border-t border-[#2b2a27]/10 px-6 transition-all duration-300 md:hidden ${
+        className={`overflow-hidden border-t border-ink/10 px-6 transition-all duration-300 lg:hidden ${
           isOpen ? "max-h-80 py-4 opacity-100" : "max-h-0 py-0 opacity-0"
         }`}
       >
@@ -162,8 +164,7 @@ const Navbar = () => {
                 <a
                   href={link.href || "#"}
                   onClick={() => setIsOpen(false)}
-                  className="text-base font-medium text-[#4a4944] transition-colors duration-200 hover:text-[#2b2a27]"
-                  style={{ fontFamily: "Inter, sans-serif" }}
+                  className="font-body text-sm font-medium uppercase tracking-[0.12em] text-ink-muted transition-colors duration-200 hover:text-ink"
                 >
                   {link.label}
                 </a>
@@ -177,8 +178,7 @@ const Navbar = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setIsOpen(false)}
-                className="inline-block rounded-full border border-[#2b2a27] bg-transparent px-4 py-1 text-sm font-medium text-[#2b2a27] transition-colors duration-200 hover:bg-[#e6e9df]"
-                style={{ fontFamily: "Inter, sans-serif" }}
+                className="font-body inline-block rounded-full border border-ink bg-transparent px-4 py-1 text-xs font-medium uppercase tracking-[0.14em] text-ink transition-colors duration-200 hover:bg-[#ebe5da]"
               >
                 Hire Me
               </a>
@@ -186,21 +186,13 @@ const Navbar = () => {
           )}
 
           {loading && (
-            <li
-              className="text-sm text-[#4a4944]"
-              style={{ fontFamily: "Inter, sans-serif" }}
-            >
+            <li className="font-body text-sm text-ink-muted">
               Loading navigation...
             </li>
           )}
 
           {!loading && error && (
-            <li
-              className="text-sm text-[#4a4944]"
-              style={{ fontFamily: "Inter, sans-serif" }}
-            >
-              {error}
-            </li>
+            <li className="font-body text-sm text-ink-muted">{error}</li>
           )}
         </ul>
       </div>

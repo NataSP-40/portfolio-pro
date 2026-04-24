@@ -6,17 +6,19 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#F3F5ED",
-        secondary: "#F4F4F5",
-        surface: "#F3F5ED",
-        ink: "#23211F",
-        "ink-strong": "#1A1410",
-        "ink-muted": "#5F5850",
-        line: "#D8DBD1",
+        primary: "#0A0A0A",
+        secondary: "#B8A98F",
+        surface: "#F7F4EF",
+        ink: "#0A0A0A",
+        "ink-strong": "#000000",
+        "ink-muted": "#3A3A3A",
+        line: "#D6D0C4",
       },
       fontFamily: {
-        sans: ["Space Grotesk", ...defaultTheme.fontFamily.sans],
-        serif: ["Inter", ...defaultTheme.fontFamily.sans],
+        sans: ["Montserrat", ...defaultTheme.fontFamily.sans],
+        serif: ["Manrope", ...defaultTheme.fontFamily.sans],
+        display: ["Montserrat", ...defaultTheme.fontFamily.sans],
+        body: ["Manrope", ...defaultTheme.fontFamily.sans],
       },
     },
   },

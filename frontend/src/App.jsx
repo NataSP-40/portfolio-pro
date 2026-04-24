@@ -52,17 +52,17 @@ function App() {
         </section>
 
         {/* Section 2: Projects */}
-        <section className="mt-10">
+        <section className="mt-0">
           <Projects />
         </section>
 
         {/* Section 3: About */}
-        <section className="mt-10">
+        <section className="mt-0">
           <About profileData={profileData} />
         </section>
 
         {/* Section 4: Contact */}
-        <section className="mt-20">
+        <section className="mt-0">
           <Contact
             contactInfo={contactInfo}
             contactLoading={contactLoading}

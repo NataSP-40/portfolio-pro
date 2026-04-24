@@ -39,6 +39,15 @@ class ResumeSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if not obj.resume_file:
             return None
+        file_url = obj.resume_file.url
+
+        # Keep Cloudinary URLs as-is; only local relative paths need request-based expansion.
+        if file_url.startswith('https://') or file_url.startswith('http://'):
+            return file_url
+
+        if file_url.startswith('//'):
+            return f'https:{file_url}'
+
         if request:
-            return request.build_absolute_uri(obj.resume_file.url)
-        return obj.resume_file.url
+            return request.build_absolute_uri(file_url)
+        return file_url

@@ -14,11 +14,13 @@ const ProjectCard = ({ project }) => {
     ? getMediaUrl(project.project_image)
     : "";
   const cardDescription = project.description || "No description provided.";
-  const linkClassName =
-    "text-sm font-medium transition-opacity hover:opacity-70";
+  const liveButtonClassName =
+    "font-body inline-flex min-w-[130px] items-center justify-center rounded-sm border border-ink/35 bg-transparent px-4 py-2 text-xs font-medium uppercase tracking-[0.12em] text-ink transition-colors duration-200 hover:bg-[#f2eee6]";
+  const githubButtonClassName =
+    "font-body inline-flex min-w-[130px] items-center justify-center rounded-sm border border-ink bg-ink px-4 py-2 text-xs font-medium uppercase tracking-[0.12em] text-surface transition-opacity duration-200 hover:opacity-90";
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded bg-[#e6e9df] shadow-[0_12px_30px_rgba(43,42,39,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(43,42,39,0.1)]">
+    <article className="flex h-full flex-col overflow-hidden rounded border border-line/60 bg-[#ebe5da] shadow-[0_12px_30px_rgba(10,10,10,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(10,10,10,0.1)]">
       {imageUrl ? (
         <img
           src={imageUrl}
@@ -26,25 +28,18 @@ const ProjectCard = ({ project }) => {
           className="aspect-video w-full object-cover"
         />
       ) : (
-        <div className="aspect-video w-full bg-[#d9ddd0]" />
+        <div className="aspect-video w-full bg-[#ded7c9]" />
       )}
 
       <div className="flex flex-1 flex-col p-6">
         <div className="space-y-4">
           <h3
-            className="text-2xl font-bold tracking-tight"
-            style={{
-              color: "#2b2a27",
-              fontFamily: '"Space Grotesk", sans-serif',
-            }}
+            className="font-display text-xl font-medium uppercase tracking-[0.14em] text-ink md:text-2xl"
           >
             {project.title}
           </h3>
 
-          <p
-            className="line-clamp-3 text-sm leading-6 md:text-base"
-            style={{ color: "#4a4944", fontFamily: '"Inter", sans-serif' }}
-          >
+          <p className="font-body line-clamp-3 text-sm leading-6 text-ink-muted md:text-base">
             {cardDescription}
           </p>
 
@@ -68,17 +63,13 @@ const ProjectCard = ({ project }) => {
         </div>
 
         {(project.live_link || project.repo_link) && (
-          <div
-            className="mt-6 flex flex-wrap gap-40 pt-2"
-            style={{ fontFamily: '"Inter", sans-serif' }}
-          >
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3 border-t border-ink/15 pt-4">
             {project.live_link && (
               <a
                 href={project.live_link}
                 target="_blank"
                 rel="noreferrer"
-                className={linkClassName}
-                style={{ color: "#2b2a27" }}
+                className={liveButtonClassName}
               >
                 Live Site
               </a>
@@ -88,8 +79,7 @@ const ProjectCard = ({ project }) => {
                 href={project.repo_link}
                 target="_blank"
                 rel="noreferrer"
-                className={linkClassName}
-                style={{ color: "#2b2a27" }}
+                className={githubButtonClassName}
               >
                 Github
               </a>
