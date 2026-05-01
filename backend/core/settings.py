@@ -140,6 +140,19 @@ DATABASES = {
         conn_health_checks=True,
     )
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'neondb', # Found in the URL after the last slash
+#         'USER': 'neondb_owner',    # Found in the URL
+#         'PASSWORD': 'npg_MDYPI5Lbwm6Z', # Found in the URL
+#         'HOST': 'ep-long-water-aj7gqy0t-pooler.c-3.us-east-2.aws.neon.tech', # Found in the URL
+#         'PORT': '5432',
+#         'OPTIONS': {
+#             'sslmode': 'require',
+#         },
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
